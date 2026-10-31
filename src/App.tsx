@@ -19,6 +19,7 @@ import { SprintProgressBar } from './components/SprintProgressBar';
 import { SprintNotificationFeed } from './components/SprintNotificationFeed';
 import { ProgressSummaryModal } from './components/ProgressSummaryModal';
 import { GitHubPulseGraph } from './components/GitHubPulseGraph';
+import { AskEngineerPanel } from './components/AskEngineerPanel';
 
 export default function App() {
   const [step, setStep] = useState<'landing' | 'intake' | 'checkout' | 'success'>('landing');
@@ -33,6 +34,7 @@ export default function App() {
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
   const [isSummaryModalOpen, setIsSummaryModalOpen] = useState(false);
+  const [isAskEngineerOpen, setIsAskEngineerOpen] = useState(false);
 
   // Active FAQ
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
@@ -172,6 +174,7 @@ export default function App() {
         currentCurrency={currency}
         onCurrencyChange={setCurrency}
         onOpenScopeChecker={() => setIsScopeModalOpen(true)}
+        onOpenAskEngineer={() => setIsAskEngineerOpen(true)}
         step={step}
         onResetToLanding={() => setStep('landing')}
       />
@@ -890,6 +893,14 @@ export default function App() {
                 <FileDown className="w-4 h-4 text-emerald-400" />
                 <span>Download Progress Summary (PDF)</span>
               </button>
+
+              <button
+                onClick={() => setIsAskEngineerOpen(true)}
+                className="py-3 px-5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs flex items-center space-x-2 transition-all border border-cyan-500/40 hover:border-cyan-400 cursor-pointer shadow-md"
+              >
+                <MessageSquare className="w-4 h-4 text-cyan-400" />
+                <span>Ask Lead Engineer</span>
+              </button>
             </div>
 
             {/* 14-Day Visual Progress Bar with Interactive Slider */}
@@ -1037,6 +1048,22 @@ export default function App() {
                           <span className="text-slate-200 font-bold">Linked on Day 1 Kickoff</span>
                         </div>
                       </div>
+
+                      <div 
+                        onClick={() => setIsAskEngineerOpen(true)}
+                        className="p-3 rounded-lg bg-cyan-950/30 border border-cyan-800/40 hover:border-cyan-500/60 flex items-center justify-between cursor-pointer transition-colors sm:col-span-2 group"
+                      >
+                        <div className="flex items-center space-x-2.5">
+                          <Terminal className="w-4 h-4 text-cyan-400 group-hover:scale-110 transition-transform" />
+                          <div>
+                            <span className="text-slate-400 block text-[10px] uppercase font-bold">Priority Technical Channel</span>
+                            <span className="text-cyan-300 font-bold">Open &ldquo;Ask Engineer&rdquo; Inquiry Panel &rarr;</span>
+                          </div>
+                        </div>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
+                          &lt; 2h Response SLA
+                        </span>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -1134,8 +1161,29 @@ export default function App() {
             currentDay={activeSprintDay}
             currency={currency}
           />
+
+          <AskEngineerPanel
+            isOpen={isAskEngineerOpen}
+            onClose={() => setIsAskEngineerOpen(false)}
+            tier={selectedTier}
+            formData={formData}
+            activeSprintDay={activeSprintDay}
+          />
         </>
       )}
+
+      {/* Floating Ask Engineer Action Button */}
+      <div className="fixed bottom-5 right-5 z-40">
+        <button
+          onClick={() => setIsAskEngineerOpen(true)}
+          className="flex items-center space-x-2 px-4 py-2.5 rounded-full bg-slate-900/95 border border-cyan-500/50 hover:border-cyan-400 text-slate-100 hover:text-cyan-300 font-mono text-xs font-semibold shadow-xl shadow-cyan-500/10 hover:shadow-cyan-500/25 backdrop-blur-md transition-all cursor-pointer group"
+          title="Send a technical inquiry to Nachiketh V."
+        >
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <MessageSquare className="w-3.5 h-3.5 text-cyan-400 group-hover:scale-110 transition-transform" />
+          <span>Ask Engineer</span>
+        </button>
+      </div>
 
     </div>
   );
